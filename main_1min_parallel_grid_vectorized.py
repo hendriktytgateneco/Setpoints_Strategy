@@ -172,7 +172,7 @@ def simulate_vectorized_setpoints_worker(args):
     return delivered_kwh, socs, actions, abs_energy_throughput
 
 def optimize_battery_with_delay_parallel(
-    start, end, battery_power_kw=50, battery_capacity_kwh=100, soc_init=0.5, delay_min=3, max_cycles_per_day=1.4
+    start, end, step = 5 ,battery_power_kw=50, battery_capacity_kwh=100, soc_init=0.5, delay_min=3, max_cycles_per_day=1.4
 ):
     df_1min = fetch_minutely_imbalance(start, end)
     df_15min = fetch_quarterhourly_imbalance(start, end)
@@ -188,7 +188,7 @@ def optimize_battery_with_delay_parallel(
     datetimes = df_1min['datetime'].to_numpy()
     # Use percentiles for realistic setpoint bounds
     low, high = np.percentile(df_15min['imbalanceprice'], [5, 95])
-    step = 2  # You can adjust the step size for grid density
+    # You can adjust the step size for grid density
     charge_price_range = np.arange(int(low), int(high), step)
     discharge_price_range = np.arange(int(low), int(high), step)
     num_days = (pd.to_datetime(end) - pd.to_datetime(start)).days
@@ -278,6 +278,7 @@ def optimize_battery_with_delay_parallel(
             summary = (
                 f"Battery Optimization Results\n\n"
                 f"Start: {start}\nEnd: {end}\n\n"
+                f"Battery Power & Energy: {battery_power_kw}kW | {battery_capacity_kwh}kWh"
                 f"Best charge setpoint: {charge_setpoint}\n"
                 f"Best discharge setpoint: {discharge_setpoint}\n"
                 f"Revenue: {best_revenue:.2f} €\n"
@@ -305,8 +306,3 @@ if __name__ == "__main__":
     end_str = end.strftime("%Y-%m-%dT%H:%M:%S")
     optimize_battery_with_delay_parallel(start_str, end_str)
 
-# To change the number of iterations, adjust the 'step' variable:
-# step = 2  # Lower = more iterations (finer grid), higher = fewer iterations (coarser grid)
-
-# In the optimize_battery_with_delay_parallel function, you can control the number of workers:
-# with ProcessPoolExecutor(max_workers=None) as executor:  # None = use all available cores
