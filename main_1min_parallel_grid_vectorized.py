@@ -42,74 +42,10 @@ import matplotlib.dates as mdates
 from concurrent.futures import ProcessPoolExecutor, as_completed
 from tqdm import tqdm
 from matplotlib.backends.backend_pdf import PdfPages
-
-ODS133_URL = "https://opendata.elia.be/api/explore/v2.1/catalog/datasets/ods133/records"
-ODS134_URL = "https://opendata.elia.be/api/explore/v2.1/catalog/datasets/ods134/records"
-
-def fetch_minutely_imbalance(start_datetime, end_datetime):
-    chunk_minutes = 7000
-    all_records = []
-    start_dt = pd.to_datetime(start_datetime)
-    end_dt = pd.to_datetime(end_datetime)
-    current_start = start_dt
-    while current_start < end_dt:
-        current_end = min(current_start + pd.Timedelta(minutes=chunk_minutes), end_dt)
-        offset = 0
-        limit = 100
-        max_offset = 9900
-        while offset <= max_offset:
-            url = (
-                f"{ODS133_URL}?where=datetime >= \"{current_start.strftime('%Y-%m-%dT%H:%M:%S')}\" AND datetime < \"{current_end.strftime('%Y-%m-%dT%H:%M:%S')}\""
-                f"&order_by=datetime"
-                f"&limit={limit}"
-                f"&offset={offset}"
-                "&timezone=Europe/Brussels"
-                "&use_labels=true"
-            )
-            response = requests.get(url)
-            response.raise_for_status()
-            data = response.json()
-            records = data.get("results", [])
-            if not records:
-                break
-            all_records.extend(records)
-            if len(records) < limit:
-                break
-            offset += limit
-        current_start = current_end
-    if all_records:
-        df = pd.DataFrame(all_records)
-        df = df.drop_duplicates(subset=["datetime"]).sort_values("datetime").reset_index(drop=True)
-        return df
-    else:
-        return pd.DataFrame([])
-
-def fetch_quarterhourly_imbalance(start_datetime, end_datetime):
-    all_records = []
-    offset = 0
-    limit = 100
-    max_offset = 9900
-    while offset <= max_offset:
-        url = (
-            f"{ODS134_URL}?where=datetime >= \"{start_datetime}\" AND datetime < \"{end_datetime}\""
-            f"&order_by=datetime"
-            f"&limit={limit}"
-            f"&offset={offset}"
-            "&timezone=Europe/Brussels"
-            "&use_labels=true"
-        )
-        response = requests.get(url)
-        response.raise_for_status()
-        data = response.json()
-        records = data.get("results", [])
-        if not records:
-            break
-        all_records.extend(records)
-        if len(records) < limit:
-            break
-        offset += limit
-        all_records.sort(key=lambda x: x['datetime'])
-    return pd.DataFrame(all_records)
+import sys
+import os
+sys.path.append(os.path.dirname(os.path.abspath(__file__)))
+from import_data import fetch_minutely_imbalance, fetch_quarterhourly_imbalance, clean_cache
 
 def simulate_vectorized_setpoints_worker(args):
     """
@@ -176,6 +112,7 @@ def optimize_battery_with_delay_parallel(
 ):
     df_1min = fetch_minutely_imbalance(start, end)
     df_15min = fetch_quarterhourly_imbalance(start, end)
+    clean_cache()
     if df_1min.empty or df_15min.empty:
         print("No data fetched for the given period.")
         return
