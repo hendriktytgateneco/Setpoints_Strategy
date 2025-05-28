@@ -112,7 +112,7 @@ def fetch_minutely_imbalance(start_datetime, end_datetime):
 def fetch_quarterhourly_imbalance(start_datetime, end_datetime):
     return fetch_with_cache('imbalance_15min', start_datetime, end_datetime, ODS134_URL, chunk_minutes=10000)
 
-def fetch_photovoltaic_production(start_datetime, end_datetime):
+def fetch_pv_production(start_datetime, end_datetime):
     return fetch_with_cache('pv', start_datetime, end_datetime, ODS032_URL)
 
 def fetch_wind_production(start_datetime, end_datetime):

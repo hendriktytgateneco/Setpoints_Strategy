@@ -1,0 +1,7 @@
+pandas
+numpy
+matplotlib
+requests
+tqdm
+# Optional for GPU acceleration in some archive scripts
+cupy

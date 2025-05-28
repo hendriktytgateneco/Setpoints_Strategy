@@ -173,8 +173,6 @@ def main():
         plt.close(fig_text)
         # Add the main plot
         pdf.savefig(fig)
-    print(f"Backtest results and plot saved to {pdf_filename}")
-    print(f"Revenue per MWh injected: {revenue_per_mwh:.2f} €/MWh")
 
     # Plot and save to PDF
     fig, ax1 = plt.subplots(figsize=(15, 6))
@@ -215,7 +213,7 @@ def main():
             f"Charge setpoint: {charge_setpoint}\n"
             f"Discharge setpoint: {discharge_setpoint}\n"
             f"Revenue: {total_revenue:.2f} €\n"
-            f"Cycles used: {cycles_used:.2f}\n"
+            f"Average Daily Cycles used: {avg_cycles_per_day:.2f}\n"
             f"Average charge price: {avg_charge_price:.2f} €/MWh\n"
             f"Average discharge price: {avg_discharge_price:.2f} €/MWh\n"
             f"Spread: {avg_spread:.2f} €/MWh\n"
@@ -224,7 +222,7 @@ def main():
         ax_text.text(0.01, 0.99, summary, va='top', ha='left', fontsize=12, family='monospace')
         pdf.savefig(fig_text)
         plt.close(fig_text)
-        
+
         # Add the main plot
         pdf.savefig(fig)
     print(f"Backtest results and plot saved to {pdf_filename}")

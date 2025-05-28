@@ -167,6 +167,8 @@ def optimize_battery_with_delay_parallel(
                     best_result = (charge_setpoint, discharge_setpoint, df_1min_temp.copy(), qh_merged.copy())
                     best_cycles_used = cycles_used
                 pbar.update(1)
+
+                
     if best_result is not None:
         charge_setpoint, discharge_setpoint, df_1min, qh_merged = best_result
         print(f"Best charge setpoint: {charge_setpoint}, Best discharge setpoint: {discharge_setpoint}, Revenue: {best_revenue:.2f}")
