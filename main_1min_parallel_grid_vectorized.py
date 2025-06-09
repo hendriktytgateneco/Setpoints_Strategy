@@ -32,8 +32,6 @@ How to Use All CPU Cores:
 - You can control the number of workers by changing 'ProcessPoolExecutor(max_workers=...)' if you want to limit or increase it (not usually needed).
 
 """
-
-import requests
 import pandas as pd
 from datetime import datetime, timedelta
 import matplotlib.pyplot as plt
