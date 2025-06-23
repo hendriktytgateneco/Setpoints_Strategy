@@ -5,3 +5,5 @@ requests
 tqdm
 # Optional for GPU acceleration in some archive scripts
 cupy
+# For Outlook email automation (Windows only)
+pywin32

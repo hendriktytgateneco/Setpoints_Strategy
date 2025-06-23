@@ -169,8 +169,8 @@ def optimize_battery_with_delay_parallel(
                 
     if best_result is not None:
         charge_setpoint, discharge_setpoint, df_1min, qh_merged = best_result
-        print(f"Best charge setpoint: {charge_setpoint}, Best discharge setpoint: {discharge_setpoint}, Revenue: {best_revenue:.2f}")
-        print(f"Average cycles per day: {round(best_cycles_used/7, 2)}")
+        # print(f"Best charge setpoint: {charge_setpoint}, Best discharge setpoint: {discharge_setpoint}, Revenue: {best_revenue:.2f}")
+        # print(f"Average cycles per day: {round(best_cycles_used/7, 2)}")
         charge_prices = df_1min.loc[df_1min['action'] == 'charge', 'imbalanceprice']
         discharge_prices = df_1min.loc[df_1min['action'] == 'discharge', 'imbalanceprice']
         avg_charge_price = charge_prices.mean() if not charge_prices.empty else float('nan')
@@ -178,9 +178,9 @@ def optimize_battery_with_delay_parallel(
         avg_spread = avg_discharge_price - avg_charge_price
         total_injected_mwh = qh_merged.loc[qh_merged['delivered_kwh'] < 0, 'delivered_kwh'].abs().sum() / 1000
         revenue_per_mwh = best_revenue / total_injected_mwh if total_injected_mwh > 0 else float('nan')
-        print(f"Average charge price: {avg_charge_price:.2f} €/MWh, Average discharge price: {avg_discharge_price:.2f} €/MWh, Average spread: {avg_spread:.2f} €/MWh")
-        print(f"Revenue per MWh injected: {revenue_per_mwh:.2f} €/MWh")
-        print(qh_merged.head(20))
+        # print(f"Average charge price: {avg_charge_price:.2f} €/MWh, Average discharge price: {avg_discharge_price:.2f} €/MWh, Average spread: {avg_spread:.2f} €/MWh")
+        # print(f"Revenue per MWh injected: {revenue_per_mwh:.2f} €/MWh")
+        # print(qh_merged.head(20))
         fig, ax1 = plt.subplots(figsize=(15, 6))
         ax1.plot(df_1min['datetime'], df_1min['soc_kwh'], '-', label='State of Charge (kWh)', color='tab:blue', linewidth=1)
         ax1.set_ylabel('State of Charge (kWh)', color='tab:blue')
